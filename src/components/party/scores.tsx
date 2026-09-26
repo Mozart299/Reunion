@@ -10,7 +10,7 @@ import { BORDER, TEXT } from "@/lib/content"
 import { cn } from "@/lib/utils"
 
 export function Scores({ onMakeTeams }: { onMakeTeams: () => void }) {
-  const { state, update } = useParty()
+  const { state, bumpScore, resetScores } = useParty()
   const [armed, setArmed] = React.useState(false)
 
   React.useEffect(() => {
@@ -40,8 +40,7 @@ export function Scores({ onMakeTeams }: { onMakeTeams: () => void }) {
 
   const top = Math.max(...state.teams.map((t) => t.score))
   const sorted = state.teams.map((t, i) => ({ t, i })).sort((a, b) => b.t.score - a.t.score)
-  const bump = (i: number, n: number) =>
-    update((s) => ({ ...s, teams: s.teams.map((t, j) => (j === i ? { ...t, score: t.score + n } : t)) }))
+  const bump = bumpScore
 
   return (
     <div className="flex flex-col gap-4">
@@ -70,7 +69,7 @@ export function Scores({ onMakeTeams }: { onMakeTeams: () => void }) {
       ))}
       <div className="flex gap-2">
         {armed ? (
-          <Button variant="destructive" size="sm" onClick={() => { update((s) => ({ ...s, teams: s.teams.map((t) => ({ ...t, score: 0 })) })); setArmed(false) }}>
+          <Button variant="destructive" size="sm" onClick={() => { resetScores(); setArmed(false) }}>
             Tap again to reset every score to 0
           </Button>
         ) : (

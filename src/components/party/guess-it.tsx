@@ -15,7 +15,7 @@ type Phase =
   | { kind: "done" }
 
 export function GuessIt({ deck }: { deck: Deck }) {
-  const { state, update } = useParty()
+  const { state, bumpScore } = useParty()
   const [phase, setPhase] = React.useState<Phase>({ kind: "intro" })
   const [team, setTeam] = React.useState<number | null>(null)
   const [left, setLeft] = React.useState(ROUND_SECONDS)
@@ -53,12 +53,11 @@ export function GuessIt({ deck }: { deck: Deck }) {
       setLeft(0)
       setPhase({ kind: "done" })
       if (team != null) {
-        const pts = got.length
-        update((s) => ({ ...s, teams: s.teams.map((t, i) => (i === team ? { ...t, score: t.score + pts } : t)) }))
+        bumpScore(team, got.length)
       }
     }, 1000)
     return () => clearTimeout(t)
-  }, [phase, left, team, got.length, update])
+  }, [phase, left, team, got.length, bumpScore])
 
   const start = (teamIdx: number | null) => { setTeam(teamIdx); setPhase({ kind: "countdown", n: 3 }) }
   const teamObj = team != null ? state.teams[team] : null

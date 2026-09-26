@@ -1,7 +1,10 @@
 # Back to Class 🎒
 
-Party games for our high school reunion. The whole thing runs on **one phone**.
-No accounts, no TV, no backend. Everything saves in that phone's browser.
+Party games for our high school reunion. No accounts, no TV needed.
+
+- **With a database connected**, every phone that opens the link is live: teams, scores and added
+  cards sync, and Most Likely To gets an **Everyone votes** button that pops a secret vote onto every phone.
+- **Without one**, it runs on one phone and saves in that phone's browser.
 
 - **Most Likely To**, **Never Have I Ever**, **Hot Seat**, **School Dares**: tap-through card decks
 - **Guess It!**: a Heads Up-style 60-second round that adds points to a team
@@ -25,4 +28,8 @@ npm run dev
 
 ## Deploy
 
-Import the repo on [vercel.com/new](https://vercel.com/new). It needs no settings or env vars.
+Import the repo on [vercel.com/new](https://vercel.com/new).
+
+To turn on live sync: in the Vercel project go to **Storage → Create Database → Upstash for Redis**
+(free plan), connect it to the project for all environments, and redeploy. The app reads
+`KV_REST_API_URL` / `KV_REST_API_TOKEN` (or `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`).

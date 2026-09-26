@@ -8,7 +8,7 @@ import { useParty } from "@/lib/store"
 import { cn } from "@/lib/utils"
 
 export function Picker({ autoPick, onAutoPicked }: { autoPick: boolean; onAutoPicked: () => void }) {
-  const { state, update, names } = useParty()
+  const { state, markPicked, names } = useParty()
   const [noRepeat, setNoRepeat] = React.useState(true)
   const [shown, setShown] = React.useState<string | null>(null)
   const [spinning, setSpinning] = React.useState(false)
@@ -30,14 +30,14 @@ export function Picker({ autoPick, onAutoPicked }: { autoPick: boolean; onAutoPi
         setShown(chosen)
         setLanded((x) => x + 1)
         setSpinning(false)
-        if (noRepeat) update((s) => ({ ...s, picked: [...(resetPicked ? [] : s.picked), chosen] }))
+        if (noRepeat) markPicked(chosen, resetPicked)
         return
       }
       setShown(names[Math.floor(Math.random() * names.length)])
       setTimeout(step, 45 + tick * 12)
     }
     step()
-  }, [spinning, names, noRepeat, state.picked, update])
+  }, [spinning, names, noRepeat, state.picked, markPicked])
 
   React.useEffect(() => {
     if (!autoPick) return

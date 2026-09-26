@@ -1,13 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { ArrowLeft, Dices, Gamepad2, Trophy, Users } from "lucide-react"
+import { ArrowLeft, Dices, Gamepad2, Radio, Smartphone, Trophy, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DeckPlayer } from "@/components/party/deck-player"
 import { GuessIt } from "@/components/party/guess-it"
 import { Teams } from "@/components/party/teams"
 import { Scores } from "@/components/party/scores"
 import { Picker } from "@/components/party/picker"
+import { VoteSheet } from "@/components/party/vote-sheet"
 import { PartyProvider, useParty } from "@/lib/store"
 import { BG, DECKS, TEXT, type Deck } from "@/lib/content"
 import { cn } from "@/lib/utils"
@@ -25,6 +26,7 @@ export default function PartyApp() {
   return (
     <PartyProvider>
       <Shell />
+      <VoteSheet />
     </PartyProvider>
   )
 }
@@ -74,7 +76,10 @@ function Shell() {
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan">The reunion edition</p>
           <h1 className="font-display text-4xl text-pink sticker-text -rotate-2 origin-left">Back to Class</h1>
         </div>
-        <Today />
+        <div className="flex flex-col items-end gap-2">
+          <Today />
+          <SyncBadge />
+        </div>
       </header>
 
       <main className="mx-auto w-full max-w-xl flex-1 overflow-y-auto px-4 pb-6 pt-2">
@@ -109,6 +114,20 @@ function Shell() {
   )
 }
 
+function SyncBadge() {
+  const { mode } = useParty()
+  if (mode === "connecting") return null
+  return mode === "live" ? (
+    <span className="flex items-center gap-1 text-[0.65rem] font-bold uppercase tracking-widest text-lime">
+      <Radio className="size-3.5 animate-pulse" /> Live on every phone
+    </span>
+  ) : (
+    <span className="flex items-center gap-1 text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground">
+      <Smartphone className="size-3.5" /> This phone only
+    </span>
+  )
+}
+
 function Today() {
   const d = new Date().toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" })
   return (
@@ -119,10 +138,12 @@ function Today() {
 }
 
 function Games({ onOpen }: { onOpen: (d: Deck) => void }) {
-  const { state } = useParty()
+  const { state, mode } = useParty()
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted-foreground">Everything runs on this one phone. Read the card out loud or pass the phone around.</p>
+      <p className="text-muted-foreground">{mode === "live"
+          ? "Everyone's phone is connected. Teams, scores and your added cards update for all. On Most Likely To, tap \"Everyone votes\"."
+          : "Everything runs on this one phone. Read the card out loud or pass the phone around."}</p>
       <div className="grid grid-cols-2 gap-3">
         {DECKS.map((d, i) => {
           const mine = state.custom[d.id]?.length ?? 0

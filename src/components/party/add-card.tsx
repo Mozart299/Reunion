@@ -9,7 +9,7 @@ import { useParty } from "@/lib/store"
 import type { DeckId } from "@/lib/content"
 
 export function AddCard({ deckId, onAdded }: { deckId: DeckId; onAdded: (text: string) => void }) {
-  const { state, update } = useParty()
+  const { state, addCard } = useParty()
   const [text, setText] = React.useState("")
   const mine = state.custom[deckId]?.length ?? 0
 
@@ -21,7 +21,7 @@ export function AddCard({ deckId, onAdded }: { deckId: DeckId; onAdded: (text: s
           e.preventDefault()
           const t = text.trim()
           if (!t) return
-          update((s) => ({ ...s, custom: { ...s.custom, [deckId]: [...(s.custom[deckId] ?? []), t] } }))
+          addCard(deckId, t)
           onAdded(t)
           setText("")
           toast.success("Added. It's coming up next.")
@@ -40,7 +40,7 @@ export function AddCard({ deckId, onAdded }: { deckId: DeckId; onAdded: (text: s
         </Button>
       </form>
       <p className="text-center text-xs text-muted-foreground">
-        {mine ? `${mine} of your own cards in this game` : "Your cards are saved on this phone."}
+        {mine ? `${mine} of your own cards in this game` : "Added cards show up for everyone."}
       </p>
     </div>
   )

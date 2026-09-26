@@ -10,16 +10,25 @@ import { BORDER, TEAM_STYLES, TEXT, shuffle } from "@/lib/content"
 import { cn } from "@/lib/utils"
 
 export function Teams({ onGoToScores }: { onGoToScores: () => void }) {
-  const { state, update, names } = useParty()
+  const { state, setRoster, setTeams, names } = useParty()
   const [count, setCount] = React.useState(3)
+  const [draft, setDraft] = React.useState<string | null>(null)
+
+  // Send the names list a moment after typing stops.
+  React.useEffect(() => {
+    if (draft === null) return
+    const t = setTimeout(() => { setRoster(draft); setDraft(null) }, 700)
+    return () => clearTimeout(t)
+  }, [draft, setRoster])
 
   const makeTeams = () => {
-    const people = shuffle(names)
+    const people = shuffle(draft === null ? names : draft.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean))
+    if (draft !== null) { setRoster(draft); setDraft(null) }
     const k = Math.max(1, Math.min(count, people.length))
     const styles = shuffle(TEAM_STYLES).slice(0, k)
-    const teams = styles.map((s) => ({ name: s.name, color: s.color, members: [] as string[], score: 0 }))
+    const teams = styles.map((s) => ({ name: s.name, color: s.color, members: [] as string[] }))
     people.forEach((p, i) => teams[i % k].members.push(p))
-    update((s) => ({ ...s, teams }))
+    setTeams(teams)
   }
 
   return (
@@ -36,9 +45,9 @@ export function Teams({ onGoToScores }: { onGoToScores: () => void }) {
         id="roster"
         aria-label="Names"
         className="min-h-40"
-        value={state.roster}
+        value={draft ?? state.roster}
         onFocus={(e) => state.rosterIsExample && e.currentTarget.select()}
-        onChange={(e) => update((s) => ({ ...s, roster: e.target.value, rosterIsExample: false, picked: [] }))}
+        onChange={(e) => setDraft(e.target.value)}
       />
 
       <div className="flex flex-wrap items-center gap-2">
@@ -54,7 +63,9 @@ export function Teams({ onGoToScores }: { onGoToScores: () => void }) {
             {n}
           </Button>
         ))}
-        <span className="ml-auto text-sm text-muted-foreground">{names.length} people</span>
+        <span className="ml-auto text-sm text-muted-foreground">
+          {(draft ?? state.roster).split(/[\n,]+/).map((s) => s.trim()).filter(Boolean).length} people
+        </span>
       </div>
 
       <div className="flex flex-wrap gap-3">

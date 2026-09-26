@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Shuffle, Dices } from "lucide-react"
+import { Shuffle, Dices, Vote } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AddCard } from "@/components/party/add-card"
 import { useParty } from "@/lib/store"
@@ -9,7 +9,7 @@ import { BG, BORDER, TEXT, shuffle, type Deck } from "@/lib/content"
 import { cn } from "@/lib/utils"
 
 export function DeckPlayer({ deck, onPickSomeone }: { deck: Deck; onPickSomeone: () => void }) {
-  const { state } = useParty()
+  const { state, mode, names, startVote } = useParty()
   const all = React.useCallback(() => deck.cards.concat(state.custom[deck.id] ?? []), [deck, state.custom])
   const [order, setOrder] = React.useState(() => shuffle(all()))
   const [i, setI] = React.useState(0)
@@ -27,6 +27,7 @@ export function DeckPlayer({ deck, onPickSomeone }: { deck: Deck; onPickSomeone:
   }
 
   const canPick = deck.id === "hot" || deck.id === "dare"
+  const canVote = deck.id === "mlt" && mode === "live" && names.length > 1
 
   return (
     <div className="flex flex-1 flex-col gap-5">
@@ -53,6 +54,11 @@ export function DeckPlayer({ deck, onPickSomeone }: { deck: Deck; onPickSomeone:
         {canPick && (
           <Button size="lg" variant="outline" className={cn("flex-1", BORDER[deck.color], TEXT[deck.color])} onClick={onPickSomeone}>
             <Dices /> Pick someone
+          </Button>
+        )}
+        {canVote && (
+          <Button size="lg" className="flex-1" onClick={() => startVote(order[i])}>
+            <Vote /> Everyone votes
           </Button>
         )}
         <Button size="lg" variant="secondary" className="flex-1" onClick={next}>

@@ -1,0 +1,125 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource/bungee/400.css";
+@import "@fontsource-variable/bricolage-grotesque";
+
+/* Theme: "Yearbook Rave" — a late-night grape board with sticker-bright
+   colours, chunky ink outlines and hard offset shadows. One deliberate look. */
+:root {
+  color-scheme: dark;
+  --radius: 0.9rem;
+
+  --ink: #0c0418;
+  --grape: #1b0b33;
+  --grape-2: #2a1450;
+  --grape-3: #3a1f6b;
+
+  --pink: #ff3d8b;
+  --sun: #ffd23f;
+  --cyan: #3de8ff;
+  --lime: #b6ff3d;
+  --tang: #ff8a3d;
+  --lilac: #b69cff;
+
+  --background: var(--grape);
+  --foreground: #fff6fb;
+  --card: var(--grape-2);
+  --card-foreground: #fff6fb;
+  --popover: var(--grape-2);
+  --popover-foreground: #fff6fb;
+  --primary: var(--pink);
+  --primary-foreground: #ffffff;
+  --secondary: var(--sun);
+  --secondary-foreground: var(--ink);
+  --muted: var(--grape-3);
+  --muted-foreground: #c9b8e8;
+  --accent: var(--cyan);
+  --accent-foreground: var(--ink);
+  --destructive: #ff4d4d;
+  --border: #4a2d80;
+  --input: #4a2d80;
+  --ring: var(--sun);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ink: var(--ink);
+  --color-pink: var(--pink);
+  --color-sun: var(--sun);
+  --color-cyan: var(--cyan);
+  --color-lime: var(--lime);
+  --color-tang: var(--tang);
+  --color-lilac: var(--lilac);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-display: "Bungee", "Impact", "Arial Black", sans-serif;
+  --font-sans: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-hard: 4px 4px 0 0 var(--ink);
+  --shadow-hard-lg: 7px 7px 0 0 var(--ink);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.07) 1px, transparent 0),
+      radial-gradient(ellipse 80% 50% at 10% 0%, rgb(255 61 139 / 0.18), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 100% 100%, rgb(61 232 255 / 0.12), transparent 60%);
+    background-size: 22px 22px, 100% 100%, 100% 100%;
+    background-attachment: fixed;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Chunky sticker text: coloured fill with an ink outline and drop */
+.sticker-text {
+  -webkit-text-stroke: 2px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 3px 3px 0 var(--ink);
+}
+
+@keyframes card-in {
+  from { transform: translateY(14px) rotate(-1.5deg) scale(0.96); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.card-in { animation: card-in 0.28s cubic-bezier(.2,.9,.3,1.3); }
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+.wobble { animation: wobble 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
